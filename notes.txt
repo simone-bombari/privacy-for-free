@@ -1,0 +1,2 @@
+synthetic/trial_fri_1 contains the best random features trial so far
+NN/trial_tue_1 contains the best NN trial so far
