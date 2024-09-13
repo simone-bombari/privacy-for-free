@@ -1,0 +1,65 @@
+
+def initialize_params(input_dim, hidden_dim, output_dim, key):
+
+    # initializing the parameters...
+
+    return (V_1, V_2)
+
+
+def predict(params, x):
+
+    return predicts...
+
+
+def loss(params, x, target):
+    pred = predict(params, x)
+    return optax.softmax_cross_entropy_with_integer_labels(pred, target)
+
+
+def clip_gradient(g, clip_norm):
+    grad_norm = jnp.linalg.norm(g)
+    return jnp.where(grad_norm <= clip_norm, g, g * (clip_norm / grad_norm))  # given the single gradient I want to clip, returns it clipped
+
+
+def evaluate(params, data, labels):
+    ...
+    return accuracy
+
+
+@jit
+def accumulate_grads(accumulated_grads, batch_grads):
+
+    return tree_map(lambda acc, batch: acc + batch, accumulated_grads, batch_grads)
+
+
+def compute_batch_clipped_grads(params, x, y, clip_norms, batch_idx):
+    
+    def single_sample_loss(params, x, y):
+        ...
+        return ...
+
+    # computes the sum of the clipped grads...
+
+
+def training_step_full(params, train_data, train_labels, learning_rate, noise_multiplier, clip_norms, key, batch_size):
+
+    # uses the previous functions to return params...
+
+
+
+
+def compute_batch_global_clipped_grads(params, x, y, clip_norm, batch_idx):
+
+    def single_sample_loss(params, x, y):
+        # should I put this function outside once and for all?
+
+    # computes the batch_sum_clipped_grads...
+    
+    return batch_sum_clipped_grads
+
+
+
+
+def training_step_global(params, train_data, train_labels, learning_rate, noise_multiplier, global_clip_norm, key, batch_size):
+
+    # uses the previous functions to return params...

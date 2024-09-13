@@ -4,18 +4,18 @@
 # single GPU + single CPU example
 #----------------------------------
 #
-#SBATCH --job-name=RF-time-19_08
-#SBATCH --output=logs/%A-%a_RF-time-19_08
+#SBATCH --job-name=RF-time-13_09_big
+#SBATCH --output=logs/%A-%a_RF-time-13_09_big
 
 #number of CPUs to be used
 #SBATCH --ntasks=1
 #
 #Define the number of hours the job should run.
 #Maximum runtime is limited to 10 days, ie. 240 hours
-#SBATCH --time=24:00:00
+#SBATCH --time=96:00:00
 #
 #Define the amount of system RAM used by your job in GigaBytes
-#SBATCH --mem=64G
+#SBATCH --mem=128G
 #
 
 ## SBATCH --reservation=mondegrp_61
@@ -48,5 +48,4 @@ module load jax-cuda/0.4.20
 #
 #run your CUDA binary through SLURM's srun
 
-srun python3 main_scaling_time.py --k ${SLURM_ARRAY_TASK_ID} --dataset 'synthetic' > outputs/${SLURM_ARRAY_TASK_ID}.txt
-
+srun python3 main_scaling_time.py --k ${SLURM_ARRAY_TASK_ID} --dataset 'synthetic' > outputs/time_13_09_big_${SLURM_ARRAY_TASK_ID}.txt

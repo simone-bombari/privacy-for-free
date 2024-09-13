@@ -23,7 +23,7 @@ k = int(args.k)
 
 time.sleep(k)
 
-save_dir = os.path.join(args.dataset, '12_09_scaling_time_new_big_ps_more_memory')
+save_dir = os.path.join(args.dataset, '12_09_scaling_time_new_big_ps_small_eta')
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 
@@ -44,7 +44,7 @@ nt = 1000
 
 eps = 4
 # eta = 1e-5  # Fixed here and small enough
-eta = 1e-3  # Fixed here and small enough
+eta = 1e-4  # Fixed here and small enough
 C = 0.5  # Fixed here
 
 # CTs = np.logspace(np.log10(2), np.log10(15), num=20)  # For this C before I had a good CT at 5

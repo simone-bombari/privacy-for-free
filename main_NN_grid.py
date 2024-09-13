@@ -16,14 +16,14 @@ args = parser.parse_args()
 
 k = int(args.k)
 
-# json_filename = f'{k}.json'
-# if json_filename in os.listdir('./NN/trial_monday_22_07_airport'):
-#     print(f"File {json_filename} already exists. Program will exit.")
-#     sys.exit(0)
+
 
 time.sleep(k)
 
-save_dir = os.path.join('NN', '19_08_crema_grid_all_widths')
+
+# old_dir = os.path.join('NN', '19_08_crema_grid_all_widths')
+
+save_dir = os.path.join('NN', '30_08_grid')
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 
@@ -128,19 +128,13 @@ def test(model, test_loader, criterion, device):
     
     return test_loss, accuracy
 
-widths = [250, 500, 1000, 2000, 5000, 10000]
-network_width = widths[k % 6]
-k = k // 6
+
+widths = [1000, 10000]
+network_width = widths[k % 1]
+k = k // 1
 
 
 model = SimpleFCN(network_width)
-
-# lrs = [0.1]  # 0.2 seems better (maybe not onn large networks)
-# lr = lrs[k % 2]
-# k = k // 2  # 2 options
-
-# Clr = 0.1
-# lr = 1000 * Clr / network_width  # In RF lr depends on 1/p
 
 Clr = 1  # Let's pump it!
 lr = 1000 * Clr / network_width
@@ -148,14 +142,9 @@ lr = 1000 * Clr / network_width
 n = 60000
 delta = 1 / n
 
-epsilons = [1, 2, 4]
-eps = epsilons[k % 3]
-k = k // 3  # 3 options
-
-# clip_Cs = [20] 
-# clip_C = clip_Cs[k % 2]
-# k = k // 2  # 2 options
-# clip_C = 20
+epsilons = [1, 4]
+eps = epsilons[k % 2]
+k = k // 2  # 3 options
 
 
 '''
@@ -165,6 +154,10 @@ Cs = np.logspace(0, 3, 20)
 
 Cs = np.logspace(-1, 3, 20)
 # [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+'''
+add: Cs = Cs[:-2]
+'''
+
 clip_C = Cs[k % 20]  # 20 options
 k = k // 20
 
@@ -177,61 +170,112 @@ Ts = np.logspace(1, 3.5, 20)
 # T = Ts[k % 2]
 # k = k // 2  # 2 options
 
+'''
+add: Ts = Ts[:-2]
+'''
+
+
 Ts = np.logspace(0, 3, 20)
 
 # T = 200
 
+# for Tfloat in Ts:
+
+#     T = int(Tfloat)
+
+#     '''
+#     add: if T is in the original file, i.e. in any row of os.path.join(old_dir, 'parameters_' + args.k + '.txt'), copy that row instead
+#     '''
+    
+#     # tau = T * lr
+#     sigma = np.sqrt(lr * T) * 8 * np.sqrt(np.log(1 / delta)) / eps
+#     noise_magnitude = np.sqrt(lr) * (2 * clip_value / n) * sigma * np.sqrt(2)  # The last sqrt 2 is because I have two parameters.
+    
+    
+#     optimizer = optim.SGD(model.parameters(), lr=lr)
+#     criterion = nn.CrossEntropyLoss()
+    
+#     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#     model.to(device)
+#     print(device)
+    
+#     # Lists to store gradients, losses, and accuracies
+#     grad_norms = []
+#     train_losses = []
+#     test_losses = []
+#     test_accuracies = []
+    
+#     for epoch in range(1, T + 1):
+#         print(f"Epoch {epoch}")
+#         train_dp(model, train_loader, optimizer, criterion, device, clip_value, noise_magnitude, grad_norms, train_losses)
+#         test_loss, test_accuracy = test(model, test_loader, criterion, device)
+#         test_losses.append(test_loss)
+#         test_accuracies.append(test_accuracy)
+#         print(f"Test Loss: {test_loss:.6f}, Accuracy: {test_accuracy:.2f}%")
+    
+
+#     with open(os.path.join(save_dir, 'parameters_' + args.k + '.txt'), 'a') as f:
+#         f.write(
+#             f"{n}\t{network_width}\t{test_accuracy}\t{eps}\t{T}\t{clip_C:.2f}\n"
+#         )
+
+
 for Tfloat in Ts:
 
     T = int(Tfloat)
-    
-    # tau = T * lr
-    sigma = np.sqrt(lr * T) * 8 * np.sqrt(np.log(1 / delta)) / eps
-    noise_magnitude = np.sqrt(lr) * (2 * clip_value / n) * sigma * np.sqrt(2)  # The last sqrt 2 is because I have two parameters.
-    
-    
-    optimizer = optim.SGD(model.parameters(), lr=lr)
-    criterion = nn.CrossEntropyLoss()
-    
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    print(device)
-    
-    # Lists to store gradients, losses, and accuracies
-    grad_norms = []
-    train_losses = []
-    test_losses = []
-    test_accuracies = []
-    
-    for epoch in range(1, T + 1):
-        print(f"Epoch {epoch}")
-        train_dp(model, train_loader, optimizer, criterion, device, clip_value, noise_magnitude, grad_norms, train_losses)
-        test_loss, test_accuracy = test(model, test_loader, criterion, device)
-        test_losses.append(test_loss)
-        test_accuracies.append(test_accuracy)
-        print(f"Test Loss: {test_loss:.6f}, Accuracy: {test_accuracy:.2f}%")
-    
-    # Save metrics to a dictionary and write to a file
-    # metrics = {
-    #     'n': n,
-    #     'epsilon': eps,
-    #     'clipC': clip_C,
-    #     'T': T,
-    #     'Clr': Clr,
-    #     'network_width': network_width,
-    #     'grad_norms': grad_norms,
-    #     'train_losses': train_losses,
-    #     'test_losses': test_losses,
-    #     'test_accuracies': test_accuracies
-    # }
-    
-    # save_path = os.path.join(save_dir, f'{args.k}.json')
-    # with open(save_path, 'w') as f:
-    #     json.dump(metrics, f)
+    old_file_path = os.path.join(old_dir, 'parameters_' + args.k + '.txt')
+    row_found = False
 
-    with open(os.path.join(save_dir, 'parameters_' + args.k + '.txt'), 'a') as f:
-        f.write(
-            f"{n}\t{network_width}\t{test_accuracy}\t{eps}\t{T}\t{clip_C:.2f}\n"
-        )
-    
+    # Check if the file exists
+    if os.path.exists(old_file_path):
+        # Open the file and check if T and clip_C are already present in the row
+        with open(old_file_path, 'r') as old_file:
+            for line in old_file:
+                cols = line.strip().split('\t')
+                if len(cols) >= 6:  # Ensure the row has at least 6 columns
+                    old_T = int(cols[4])  # The 5th column is T
+                    old_clip_C = float(cols[5])  # The 6th column is clip_C
+
+                    # Check if both T and clip_C match
+                    if old_T == T and old_clip_C == round(clip_C, 2):
+                        # Copy the row and write to the new file
+                        with open(os.path.join(save_dir, 'parameters_' + args.k + '.txt'), 'a') as f:
+                            f.write(line)
+                        row_found = True
+                        print(f"Row with T={T} and clip_C={clip_C:.2f} found. Copying from previous file.")
+                        break  # Exit loop once the matching row is found
+
+
+    # If the row is not found and clipping is not in the last two values
+    if not row_found and k < 18:
+        # tau = T * lr
+        sigma = np.sqrt(lr * T) * 8 * np.sqrt(np.log(1 / delta)) / eps
+        noise_magnitude = np.sqrt(lr) * (2 * clip_value / n) * sigma * np.sqrt(2)  # The last sqrt(2) because of two parameters.
+        
+        optimizer = optim.SGD(model.parameters(), lr=lr)
+        criterion = nn.CrossEntropyLoss()
+        
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model.to(device)
+        print(device)
+        
+        # Lists to store gradients, losses, and accuracies
+        grad_norms = []
+        train_losses = []
+        test_losses = []
+        test_accuracies = []
+        
+        for epoch in range(1, T + 1):
+            print(f"Epoch {epoch}")
+            train_dp(model, train_loader, optimizer, criterion, device, clip_value, noise_magnitude, grad_norms, train_losses)
+            test_loss, test_accuracy = test(model, test_loader, criterion, device)
+            test_losses.append(test_loss)
+            test_accuracies.append(test_accuracy)
+            print(f"Test Loss: {test_loss:.6f}, Accuracy: {test_accuracy:.2f}%")
+        
+        # Append new results to the output file
+        with open(os.path.join(save_dir, 'parameters_' + args.k + '.txt'), 'a') as f:
+            f.write(
+                f"{n}\t{network_width}\t{test_accuracy}\t{eps}\t{T}\t{clip_C:.2f}\n"
+            )
 

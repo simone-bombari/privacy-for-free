@@ -4,8 +4,8 @@
 # single GPU + single CPU example
 #----------------------------------
 #
-#SBATCH --job-name=RF-original-21_08
-#SBATCH --output=logs/%A-%a_RF-original-21_08
+#SBATCH --job-name=RF-original-12_09
+#SBATCH --output=logs/%A-%a_RF-original-12_09
 
 #number of CPUs to be used
 #SBATCH --ntasks=1
@@ -48,5 +48,5 @@ module load jax-cuda/0.4.20
 #
 #run your CUDA binary through SLURM's srun
 
-srun python3 main_less_time.py --k ${SLURM_ARRAY_TASK_ID} --dataset 'synthetic' > outputs/${SLURM_ARRAY_TASK_ID}.txt
+srun python3 main_less_time.py --k ${SLURM_ARRAY_TASK_ID} --dataset 'synthetic' > outputs/RF_original_${SLURM_ARRAY_TASK_ID}.txt
 

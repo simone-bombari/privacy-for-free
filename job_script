@@ -4,8 +4,8 @@
 # single GPU + single CPU example
 #----------------------------------
 #
-#SBATCH --job-name=RF-grid-16_08_new
-#SBATCH --output=logs/%A-%a_RF-grid-16_08_new
+#SBATCH --job-name=RF-grid-30_08
+#SBATCH --output=logs/%A-%a_RF-grid-30_08
 
 #number of CPUs to be used
 #SBATCH --ntasks=1
@@ -15,7 +15,7 @@
 #SBATCH --time=120:00:00
 #
 #Define the amount of system RAM used by your job in GigaBytes
-#SBATCH --mem=64G
+#SBATCH --mem=32G
 #
 
 ## SBATCH --reservation=mondegrp_61
@@ -48,5 +48,5 @@ module load jax-cuda/0.4.20
 #
 #run your CUDA binary through SLURM's srun
 
-srun python3 main_grid.py --k ${SLURM_ARRAY_TASK_ID} --dataset 'synthetic' > outputs/${SLURM_ARRAY_TASK_ID}.txt
+srun python3 main_grid.py --k ${SLURM_ARRAY_TASK_ID} --dataset 'synthetic' > outputs/RF_grid_${SLURM_ARRAY_TASK_ID}.txt
 
