@@ -1,1 +1,16 @@
+# Ignore all directories
 */
+
+# Ignore all files that start with "job_script"
+job_script*
+
+# Ignore all .pdf files
+*.pdf
+
+# Ignore all .ipynb (Jupyter Notebook) files
+*.ipynb
+
+# Allow certain files to be tracked
+!/.gitignore
+!/README.md
+
